@@ -30,8 +30,18 @@ class ModelManager:
         
         if self.device == "cpu":
             print("Running on CPU. Note: Inference will be slower than GPU.")
-            # Set CPU thread count for better performance (optional)
-            # torch.set_num_threads(4)  # Uncomment and adjust based on your CPU
+            # Set CPU thread count for better performance (configurable via env var)
+            cpu_threads = os.getenv("CPU_THREADS")
+            if cpu_threads:
+                try:
+                    num_threads = int(cpu_threads)
+                    torch.set_num_threads(num_threads)
+                    print(f"CPU threads set to: {num_threads}")
+                except ValueError:
+                    print(f"Warning: Invalid CPU_THREADS value '{cpu_threads}', using default")
+            else:
+                # Use PyTorch default (usually number of CPU cores)
+                print(f"Using default CPU threads (auto-detected: {torch.get_num_threads()})")
         elif self.device == "cuda":
             print(f"Running on CUDA (GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'N/A'})")
     

@@ -37,6 +37,9 @@ export HF_MODEL_NAME="microsoft/DialoGPT-medium"  # or any other model
 # Force CPU-only mode (even if GPU is available)
 export FORCE_CPU=true
 
+# Configure CPU threads (optional, for performance tuning)
+export CPU_THREADS=4  # Use 4 threads (adjust based on your CPU)
+
 python app.py
 ```
 
@@ -203,6 +206,7 @@ print(result["choices"][0]["message"]["content"])
 
 - `HF_MODEL_NAME`: Hugging Face model identifier (default: "LiquidAI/LFM2-700M")
 - `FORCE_CPU`: Force CPU-only mode even if GPU is available. Set to `true`, `1`, `yes`, or `on` to enable (default: auto-detect)
+- `CPU_THREADS`: Number of CPU threads to use for inference (default: auto-detected based on CPU cores). Set to a number like `4` or `8` to limit threads
 
 ## Requirements
 
