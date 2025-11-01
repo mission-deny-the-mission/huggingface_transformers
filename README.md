@@ -28,16 +28,21 @@ pip install -r requirements.txt
 
 ### 1. Start the API Server
 
-By default, the server will load GPT-2. To use a different model, set the `HF_MODEL_NAME` environment variable:
+By default, the server will load LFM2-700M. To use a different model or force CPU mode, set environment variables:
 
 ```bash
+# Use a different model
 export HF_MODEL_NAME="microsoft/DialoGPT-medium"  # or any other model
+
+# Force CPU-only mode (even if GPU is available)
+export FORCE_CPU=true
+
 python app.py
 ```
 
 Or with uvicorn directly:
 ```bash
-uvicorn app:app --host 0.0.0.0 --port 8000
+FORCE_CPU=true uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 
 The API will be available at `http://localhost:8000`.
@@ -196,7 +201,8 @@ print(result["choices"][0]["message"]["content"])
 
 ## Environment Variables
 
-- `HF_MODEL_NAME`: Hugging Face model identifier (default: "gpt2")
+- `HF_MODEL_NAME`: Hugging Face model identifier (default: "LiquidAI/LFM2-700M")
+- `FORCE_CPU`: Force CPU-only mode even if GPU is available. Set to `true`, `1`, `yes`, or `on` to enable (default: auto-detect)
 
 ## Requirements
 

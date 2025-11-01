@@ -18,11 +18,22 @@ class ModelManager:
         self.tokenizer = None
         self.generator = None
         self.current_model_name: Optional[str] = None
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        
+        # Check for forced CPU mode via environment variable
+        force_cpu = os.getenv("FORCE_CPU", "").lower() in ("true", "1", "yes", "on")
+        
+        if force_cpu:
+            self.device = "cpu"
+            print("FORCE_CPU enabled: Running in CPU-only mode (GPU disabled)")
+        else:
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        
         if self.device == "cpu":
             print("Running on CPU. Note: Inference will be slower than GPU.")
             # Set CPU thread count for better performance (optional)
             # torch.set_num_threads(4)  # Uncomment and adjust based on your CPU
+        elif self.device == "cuda":
+            print(f"Running on CUDA (GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'N/A'})")
     
     def load_model(self, model_name: str, load_in_8bit: bool = False, load_in_4bit: bool = False):
         """
