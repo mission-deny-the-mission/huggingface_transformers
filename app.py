@@ -3,6 +3,7 @@ OpenAI-compatible API wrapper for Hugging Face Transformers.
 """
 import os
 import time
+import argparse
 from typing import List, Optional, Dict, Any
 from contextlib import asynccontextmanager
 
@@ -177,7 +178,96 @@ async def create_chat_completion(request: ChatCompletionRequest):
     )
 
 
+def parse_args():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(description="OpenAI-compatible API wrapper for Hugging Face Transformers")
+    parser.add_argument(
+        "--model",
+        type=str,
+        help="Model name to load (e.g., 'LiquidAI/LFM2-700M', 'Qwen/Qwen2.5-7B-Instruct')"
+    )
+    parser.add_argument(
+        "--host",
+        type=str,
+        default="0.0.0.0",
+        help="Host to bind the server to (default: 0.0.0.0)"
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8000,
+        help="Port to bind the server to (default: 8000)"
+    )
+    parser.add_argument(
+        "--cpu",
+        action="store_true",
+        help="Force CPU mode even if GPU is available"
+    )
+    parser.add_argument(
+        "--cpu-threads",
+        type=int,
+        help="Number of CPU threads to use for inference"
+    )
+    parser.add_argument(
+        "--list-models",
+        action="store_true",
+        help="List available model presets and exit"
+    )
+    return parser.parse_args()
+
+
+def list_available_models():
+    """List available model presets."""
+    models = {
+        "default": "LiquidAI/LFM2-700M",
+        "qwen": "Qwen/Qwen2.5-7B-Instruct",
+        "qwen2": "Qwen/Qwen2.5-14B-Instruct",
+        "qwen3": "Qwen/Qwen2.5-72B-Instruct",
+        "qwen3-next": "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8",
+        "qwen3-next-fp8": "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8",
+        "llama2-7b": "meta-llama/Llama-2-7b-chat-hf",
+        "llama2-13b": "meta-llama/Llama-2-13b-chat-hf",
+        "llama3-8b": "meta-llama/Meta-Llama-3-8B-Instruct",
+        "gpt2": "gpt2",
+        "gpt2-medium": "gpt2-medium",
+        "gpt2-large": "gpt2-large",
+        "dialogpt": "microsoft/DialoGPT-medium",
+    }
+    
+    print("Available model presets:")
+    print("=" * 50)
+    for name, model_id in models.items():
+        print(f"{name:12} -> {model_id}")
+    print("=" * 50)
+    print("Usage examples:")
+    print("  python app.py --model qwen")
+    print("  python app.py --model Qwen/Qwen2.5-7B-Instruct")
+    print("  python app.py --model gpt2 --cpu")
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    
+    args = parse_args()
+    
+    # Handle list models command
+    if args.list_models:
+        list_available_models()
+        exit(0)
+    
+    # Set environment variables based on command line arguments
+    if args.model:
+        os.environ["HF_MODEL_NAME"] = args.model
+    
+    if args.cpu:
+        os.environ["FORCE_CPU"] = "true"
+    
+    if args.cpu_threads:
+        os.environ["CPU_THREADS"] = str(args.cpu_threads)
+    
+    # Update model manager with the specified model if provided
+    if args.model:
+        model_manager.default_model = args.model
+    
+    uvicorn.run(app, host=args.host, port=args.port)
 

@@ -28,7 +28,29 @@ pip install -r requirements.txt
 
 ### 1. Start the API Server
 
-By default, the server will load LFM2-700M. To use a different model or force CPU mode, set environment variables:
+#### Option 1: Using Command Line Arguments (Recommended)
+
+```bash
+# Start with default model (LFM2-700M)
+python app.py
+
+# Start with a specific model using preset name
+python app.py --model qwen
+
+# Start with a specific model using full model ID
+python app.py --model Qwen/Qwen2.5-7B-Instruct
+
+# Force CPU mode
+python app.py --model gpt2 --cpu
+
+# Specify custom host and port
+python app.py --model qwen --host 0.0.0.0 --port 8080
+
+# List available model presets
+python app.py --list-models
+```
+
+#### Option 2: Using Environment Variables
 
 ```bash
 # Use a different model
@@ -158,29 +180,76 @@ python benchmark.py \
 
 ## Using with Different Models
 
-### Small Models (for testing)
+### Available Model Presets
+
+The application includes several model presets for easy access:
+
 ```bash
-export HF_MODEL_NAME="gpt2"
-python app.py
+# Default model (LFM2-700M)
+python app.py --model default
+
+# Qwen models (recommended for chat)
+python app.py --model qwen        # Qwen2.5-7B-Instruct
+python app.py --model qwen2       # Qwen2.5-14B-Instruct
+python app.py --model qwen3       # Qwen2.5-72B-Instruct
+python app.py --model qwen3-next  # Qwen3-Next-80B-A3B-Instruct-FP8 (MoE model)
+
+# Llama models
+python app.py --model llama2-7b   # Llama-2-7b-chat-hf
+python app.py --model llama2-13b  # Llama-2-13b-chat-hf
+python app.py --model llama3-8b   # Meta-Llama-3-8B-Instruct
+
+# GPT-2 models (good for testing)
+python app.py --model gpt2
+python app.py --model gpt2-medium
+python app.py --model gpt2-large
+
+# Dialog models
+python app.py --model dialogpt    # microsoft/DialoGPT-medium
 ```
 
-### Medium Models
+### Using Custom Models
+
+You can also use any Hugging Face model by specifying its full ID:
+
 ```bash
-export HF_MODEL_NAME="microsoft/DialoGPT-medium"
-python app.py
+python app.py --model "meta-llama/Llama-2-70b-chat-hf"
+python app.py --model "microsoft/DialoGPT-large"
+python app.py --model "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8"
 ```
 
-### Large Models (requires sufficient GPU memory)
+### CPU Mode
+
+For models that don't require a GPU or when GPU memory is limited:
+
 ```bash
-export HF_MODEL_NAME="meta-llama/Llama-2-7b-chat-hf"
-python app.py
+python app.py --model gpt2 --cpu --cpu-threads 4
+```
+
+### Qwen3-Next Model (FP8 Quantized MoE)
+
+The Qwen3-Next-80B-A3B-Instruct-FP8 is a special model with these characteristics:
+- **Mixture of Experts (MoE)**: 80B total parameters but only ~3B activated per token
+- **FP8 Quantization**: Already quantized for memory efficiency
+- **Long Context**: Supports input sequences exceeding 260,000 tokens
+- **GPU Recommended**: Requires significant memory, GPU is strongly recommended
+
+```bash
+# Load the Qwen3-Next model (GPU recommended)
+python app.py --model qwen3-next
+
+# Or use the full model name
+python app.py --model "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8"
 ```
 
 ### With Quantization (4-bit for memory efficiency)
+
 Edit `model_manager.py` and modify the `load_default_model` method to use:
 ```python
 self.load_model(default_model, load_in_4bit=True)
 ```
+
+Note: The Qwen3-Next-FP8 model is already quantized and doesn't need additional quantization.
 
 ## Python Client Example
 
@@ -201,6 +270,15 @@ response = requests.post(
 result = response.json()
 print(result["choices"][0]["message"]["content"])
 ```
+
+## Command Line Options
+
+- `--model`: Model name or preset to load (e.g., 'qwen', 'gpt2', or full model ID)
+- `--host`: Host to bind the server to (default: 0.0.0.0)
+- `--port`: Port to bind the server to (default: 8000)
+- `--cpu`: Force CPU mode even if GPU is available
+- `--cpu-threads`: Number of CPU threads to use for inference
+- `--list-models`: List available model presets and exit
 
 ## Environment Variables
 
