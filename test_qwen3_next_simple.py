@@ -19,8 +19,8 @@ def test_qwen3_next_preset():
         "qwen": "Qwen/Qwen2.5-7B-Instruct",
         "qwen2": "Qwen/Qwen2.5-14B-Instruct",
         "qwen3": "Qwen/Qwen2.5-72B-Instruct",
-        "qwen3-next": "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8",
-        "qwen3-next-fp8": "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8",
+        "qwen3-next": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+        "qwen3-next-instruct": "Qwen/Qwen3-Next-80B-A3B-Instruct",
         "llama2-7b": "meta-llama/Llama-2-7b-chat-hf",
         "llama2-13b": "meta-llama/Llama-2-13b-chat-hf",
         "llama3-8b": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -32,7 +32,7 @@ def test_qwen3_next_preset():
     
     # Test preset mapping
     print("\n1. Testing preset mapping...")
-    test_presets = ["qwen3-next", "qwen3-next-fp8"]
+    test_presets = ["qwen3-next", "qwen3-next-instruct"]
     
     for preset in test_presets:
         if preset in model_presets:
@@ -44,11 +44,11 @@ def test_qwen3_next_preset():
     
     # Test model name detection
     print("\n2. Testing model name detection...")
-    test_model_name = "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8"
-    is_qwen3_next_fp8 = "Qwen3-Next-80B-A3B-Instruct-FP8" in test_model_name
+    test_model_name = "Qwen/Qwen3-Next-80B-A3B-Instruct"
+    is_qwen3_next = "Qwen3-Next-80B-A3B-Instruct" in test_model_name
     
-    if is_qwen3_next_fp8:
-        print(f"✓ Correctly detected Qwen3-Next FP8 model: {test_model_name}")
+    if is_qwen3_next:
+        print(f"✓ Correctly detected Qwen3-Next model: {test_model_name}")
     else:
         print(f"✗ Failed to detect Qwen3-Next FP8 model: {test_model_name}")
         return False

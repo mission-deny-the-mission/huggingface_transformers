@@ -220,11 +220,9 @@ def list_available_models():
     """List available model presets."""
     models = {
         "default": "LiquidAI/LFM2-700M",
-        "qwen": "Qwen/Qwen2.5-7B-Instruct",
-        "qwen2": "Qwen/Qwen2.5-14B-Instruct",
-        "qwen3": "Qwen/Qwen2.5-72B-Instruct",
-        "qwen3-next": "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8",
-        "qwen3-next-fp8": "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8",
+        "qwen3": "Qwen/Qwen3-7B-Instruct",
+        "qwen3-next": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+        "qwen3-next-instruct": "Qwen/Qwen3-Next-80B-A3B-Instruct",
         "llama2-7b": "meta-llama/Llama-2-7b-chat-hf",
         "llama2-13b": "meta-llama/Llama-2-13b-chat-hf",
         "llama3-8b": "meta-llama/Meta-Llama-3-8B-Instruct",

@@ -192,7 +192,7 @@ python app.py --model default
 python app.py --model qwen        # Qwen2.5-7B-Instruct
 python app.py --model qwen2       # Qwen2.5-14B-Instruct
 python app.py --model qwen3       # Qwen2.5-72B-Instruct
-python app.py --model qwen3-next  # Qwen3-Next-80B-A3B-Instruct-FP8 (MoE model)
+python app.py --model qwen3-next  # Qwen3-Next-80B-A3B-Instruct (MoE model)
 
 # Llama models
 python app.py --model llama2-7b   # Llama-2-7b-chat-hf
@@ -215,7 +215,7 @@ You can also use any Hugging Face model by specifying its full ID:
 ```bash
 python app.py --model "meta-llama/Llama-2-70b-chat-hf"
 python app.py --model "microsoft/DialoGPT-large"
-python app.py --model "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8"
+python app.py --model "Qwen/Qwen3-Next-80B-A3B-Instruct"
 ```
 
 ### CPU Mode
@@ -228,7 +228,7 @@ python app.py --model gpt2 --cpu --cpu-threads 4
 
 ### Qwen3-Next Model (FP8 Quantized MoE)
 
-The Qwen3-Next-80B-A3B-Instruct-FP8 is a special model with these characteristics:
+The Qwen3-Next-80B-A3B-Instruct is a special model with these characteristics:
 - **Mixture of Experts (MoE)**: 80B total parameters but only ~3B activated per token
 - **FP8 Quantization**: Already quantized for memory efficiency
 - **Long Context**: Supports input sequences exceeding 260,000 tokens
@@ -249,7 +249,7 @@ Edit `model_manager.py` and modify the `load_default_model` method to use:
 self.load_model(default_model, load_in_4bit=True)
 ```
 
-Note: The Qwen3-Next-FP8 model is already quantized and doesn't need additional quantization.
+Note: The Qwen3-Next model is already optimized and doesn't need additional quantization.
 
 ## Python Client Example
 

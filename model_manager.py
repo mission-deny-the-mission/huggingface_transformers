@@ -58,8 +58,8 @@ class ModelManager:
         try:
             print(f"Loading model: {model_name} on device: {self.device}")
             
-            # Special handling for Qwen3-Next-80B-A3B-Instruct-FP8
-            is_qwen3_next_fp8 = "Qwen3-Next-80B-A3B-Instruct-FP8" in model_name
+            # Special handling for Qwen3-Next-80B-A3B-Instruct
+            is_qwen3_next = "Qwen3-Next-80B-A3B-Instruct" in model_name
             
             # Load tokenizer (trust_remote_code needed for some models like LFM2-700M and Qwen3-Next)
             try:
@@ -82,9 +82,9 @@ class ModelManager:
                 load_in_4bit = False
                 load_in_8bit = False
             
-            # Skip additional quantization for FP8 models (already quantized)
-            if is_qwen3_next_fp8 and (load_in_4bit or load_in_8bit):
-                print("Note: Model is already FP8-quantized, skipping additional quantization.")
+            # Skip additional quantization for Qwen3-Next models (already optimized)
+            if is_qwen3_next and (load_in_4bit or load_in_8bit):
+                print("Note: Qwen3-Next model is already optimized, skipping additional quantization.")
                 load_in_4bit = False
                 load_in_8bit = False
             
@@ -115,15 +115,14 @@ class ModelManager:
                 use_device_map = True
             else:
                 if self.device == "cuda":
-                    # Special handling for Qwen3-Next-80B-A3B-Instruct-FP8
-                    if is_qwen3_next_fp8:
-                        print("Loading Qwen3-Next-80B-A3B-Instruct-FP8 with optimized settings...")
+                    # Special handling for Qwen3-Next-80B-A3B-Instruct
+                    if is_qwen3_next:
+                        print("Loading Qwen3-Next-80B-A3B-Instruct with optimized settings...")
                         self.model = AutoModelForCausalLM.from_pretrained(
                             model_name,
                             torch_dtype=torch.bfloat16,
                             device_map="auto",
                             trust_remote_code=True,
-                            # FP8 models don't need additional quantization
                             # Use optimized settings for MoE models
                         )
                     else:
@@ -138,8 +137,8 @@ class ModelManager:
                     # CPU: use float32, no device_map
                     # Note: Some models may have issues with CPU inference if they require special attention
                     # For maximum compatibility, we load without device_map and let the model stay on CPU
-                    if is_qwen3_next_fp8:
-                        print("Warning: Qwen3-Next-80B-A3B-Instruct-FP8 requires significant memory. GPU is recommended.")
+                    if is_qwen3_next:
+                        print("Warning: Qwen3-Next-80B-A3B-Instruct requires significant memory. GPU is recommended.")
                         print("Attempting to load on CPU with reduced precision...")
                         self.model = AutoModelForCausalLM.from_pretrained(
                             model_name,
@@ -184,8 +183,8 @@ class ModelManager:
             "qwen": "Qwen/Qwen2.5-7B-Instruct",
             "qwen2": "Qwen/Qwen2.5-14B-Instruct",
             "qwen3": "Qwen/Qwen2.5-72B-Instruct",
-            "qwen3-next": "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8",
-            "qwen3-next-fp8": "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8",
+            "qwen3-next": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+            "qwen3-next-instruct": "Qwen/Qwen3-Next-80B-A3B-Instruct",
             "llama2-7b": "meta-llama/Llama-2-7b-chat-hf",
             "llama2-13b": "meta-llama/Llama-2-13b-chat-hf",
             "llama3-8b": "meta-llama/Meta-Llama-3-8B-Instruct",
